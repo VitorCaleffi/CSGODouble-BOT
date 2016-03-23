@@ -2,6 +2,7 @@
 var Maxbet = 0;
 var Startbet = 0;
 var FirstColor = 'r';
+var AutoStopOn = 0;
 var AutoReconnect = true;
 
 //import dom objects
@@ -131,6 +132,7 @@ function commands()
   log("Maxbet - Seta o valor maximo de uma aposta (valor inteiro)");
   log("Startbet - Valor da primeira aposta (valor inteiro)");
   log("FirstColor - primeira cor que o bot deve apostar ('r', 'g', 'b')");
+  log("AutoStopOn - Parar após perdas consecutivas");
   log("AutoReconnect (true, false)");
   log("---------------------");
 }
@@ -175,14 +177,26 @@ function getStatus()
       iCurrentBet = Startbet;
 
       log("Você ganhou!");
+      iLooseStreak = 0;
       iWins++;
     }
     else
     {
       bWinLastRound = false;
       iCurrentBet = iCurrentBet * 2;
+      iLooseStreak++;
+
+      if(iCurrentBet > Maxbet && Maxbet > 0)
+        iCurrentBet = Maxbet;
 
       log("Você perdeu :(");
+
+      if(iLooseStreak >= AutoStopOn && AutoStopOn > 0)
+      {
+        log("Você perdeu " + iLooseStreak + " em seguida, autostop ativado.");
+        Start = false;
+      }
+
       iLosts++;
     }
 
