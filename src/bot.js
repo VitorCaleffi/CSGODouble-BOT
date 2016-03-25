@@ -29,6 +29,7 @@ var Start = false; //toggle pelo StartStopBot
 var iStartBalance = 0; //balanço inicial
 var bWinLastRound = false; //se ganhou a ultima bet
 var iCurrentStatus = 0; //Round atual do CSGODouble
+var iRecentBets = 0;
 var PossibleBets = ['r', 'b'];
 
 //enum
@@ -227,8 +228,13 @@ function getStatus()
         sCurrentBetColor = (sLastWinColor != 'g' && sCurrentBetColor != sLastWinColor) ? sLastWinColor : (sLastWinColor == 'g') ? FirstColor : FirstColor;
       break;
       case BetSystem.interweaving:
-        if(iBets / 2)
+        if(iRecentBets >= 1)
+        {
           sCurrentBetColor = (sCurrentBetColor == 'r') ? 'b' : 'r';
+          iRecentBets = 0;
+        }
+
+        iRecentBets++;
       break;
     }
 
