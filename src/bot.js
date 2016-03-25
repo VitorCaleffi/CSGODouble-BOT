@@ -3,7 +3,7 @@ var Maxbet = 0;
 var Startbet = 0;
 var FirstColor = 'r';
 var AutoStopOn = 0;
-var Method = BetSystem.Martin;
+var Method = 1;
 var AutoReconnect = true;
 
 //import dom objects
@@ -42,9 +42,9 @@ RolletStatus =
 
 BetSystem =
 {
-  Random = 0,
-  Martin = 1,
-  interweaving = 3
+  Random : 0,
+  Martin : 1,
+  interweaving : 3
 }
 
 //main LOOP
@@ -228,7 +228,7 @@ function getStatus()
       break;
       case BetSystem.interweaving:
         if(iBets / 2)
-          sCurrentBetColor = (sCurrentBetColor == 'r') : 'b' : 'r';
+          sCurrentBetColor = (sCurrentBetColor == 'r') ? 'b' : 'r';
       break;
     }
 
