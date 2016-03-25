@@ -3,6 +3,7 @@ var Maxbet = 0;
 var Startbet = 0;
 var FirstColor = 'r';
 var AutoStopOn = 0;
+var Method = BetSystem.Martin;
 var AutoReconnect = true;
 
 //import dom objects
@@ -28,6 +29,7 @@ var Start = false; //toggle pelo StartStopBot
 var iStartBalance = 0; //balanço inicial
 var bWinLastRound = false; //se ganhou a ultima bet
 var iCurrentStatus = 0; //Round atual do CSGODouble
+var PossibleBets = ['r', 'b'];
 
 //enum
 RolletStatus =
@@ -36,6 +38,13 @@ RolletStatus =
   Confirming : 2,
   Rolling : 3,
   Rolled : 4
+}
+
+BetSystem =
+{
+  Random = 0,
+  Martin = 1,
+  interweaving = 3
 }
 
 //main LOOP
@@ -133,8 +142,17 @@ function commands()
   log("Startbet - Valor da primeira aposta (valor inteiro)");
   log("FirstColor - primeira cor que o bot deve apostar ('r', 'g', 'b')");
   log("AutoStopOn - Parar após perdas consecutivas");
+  log("Method - Escolhe o metodo de apostas (Martin, interweaving, random)");
+  log("-- |BetSystem.Martin - Muda para a cor que ganhou quando perder")
+  log("-- |BetSystem.interweaving - Aposta 2x em cada cor, não importa o resultado");
+  log("-- |BetSystem.random - Escolhe randomicamente a proxima cor")
   log("AutoReconnect (true, false)");
   log("---------------------");
+}
+
+function randomIntFromInterval(min,max)
+{
+    return Math.floor(Math.random()*(max-min+1)+min);
 }
 
 function getStatus()
@@ -200,12 +218,19 @@ function getStatus()
       iLosts++;
     }
 
-    if(sLastWinColor != 'g' && sCurrentBetColor != sLastWinColor)
-      sCurrentBetColor = sLastWinColor;
-    else if (sLastWinColor == 'g')
-      sCurrentBetColor = FirstColor;
-    else
-      sCurrentBetColor = FirstColor;
+    switch(Method)
+    {
+      case BetSystem.Random:
+        sCurrentBetColor = PossibleBets[randomIntFromInterval(0,1)];
+      break;
+      case BetSystem.Martin:
+        sCurrentBetColor = (sLastWinColor != 'g' && sCurrentBetColor != sLastWinColor) ? sLastWinColor : (sLastWinColor == 'g') ? FirstColor : FirstColor;
+      break;
+      case BetSystem.interweaving:
+        if(iBets / 2)
+          sCurrentBetColor = (sCurrentBetColor == 'r') : 'b' : 'r';
+      break;
+    }
 
     iCurrentStatus = RolletStatus.Rolled;
     bBetTime = false;
