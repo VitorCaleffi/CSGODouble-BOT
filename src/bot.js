@@ -233,8 +233,9 @@ function getStatus()
           sCurrentBetColor = (sCurrentBetColor == 'r') ? 'b' : 'r';
           iRecentBets = 0;
         }
-
-        iRecentBets++;
+        else
+          iRecentBets++;
+          
       break;
     }
 
